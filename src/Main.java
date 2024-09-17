@@ -1,5 +1,3 @@
-import java.awt.desktop.OpenURIEvent;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -9,7 +7,12 @@ public class Main {
 
     private static Scanner scanner = new Scanner(System.in);
     private static int MAXTRY = 6;
-    private static String[] glawo = {
+    private static String wordSecret;
+    private static String wordCloneForLetter;
+    private static String inputLetterPlayer;
+    private static String recordWord;
+    private static ArrayList<String> lettersError = new ArrayList<String>();
+    private static String[] glawos = {
             " _____\n",
             " |   |\n",
             " |   \n",
@@ -19,16 +22,18 @@ public class Main {
     };
 
     public static void main(String[] args) {
+        wordSecret = "Слово";
+        wordCloneForLetter = wordSecret;
         startedGame();
     }
 
     public static void startedGame() {
-        String word = "Слово";
-        String[] letter = CheckongTheLetter(word);
+
+        String letter = CheckongTheLetter();
     }
 
     public static void displayGallow() {
-        for (String line : glawo) {
+        for (String line : glawos) {
             System.out.print(line);
         }
     }
@@ -36,22 +41,22 @@ public class Main {
     public static void updateGallow(int step) {
         switch (step) {
             case 1:
-                glawo[2] = " |   O\n";
+                glawos[2] = " |   O\n";
                 break;
             case 2:
-                glawo[3] = " |   |\n";
+                glawos[3] = " |   |\n";
                 break;
             case 3:
-                glawo[3] = " |  /|\n";
+                glawos[3] = " |  /|\n";
                 break;
             case 4:
-                glawo[3] = " |  /|\\\n";
+                glawos[3] = " |  /|\\\n";
                 break;
             case 5:
-                glawo[4] = " |  / \n";
+                glawos[4] = " |  / \n";
                 break;
             case 6:
-                glawo[4] = " |  / \\\n";
+                glawos[4] = " |  / \\\n";
                 break;
             default:
                 break;
@@ -60,62 +65,75 @@ public class Main {
 
     public static void outputGallow(int i) {
 
-        for (; i <= MAXTRY;) {
+        for (; i <= MAXTRY; ) {
             updateGallow(i);
             displayGallow();
             break;
         }
     }
 
-    public static char inputPlayerTheLetter() {
+    public static String inputPlayerTheLetter() {
         //Игрок 2 вводит букву через scanner
         System.out.println("\nВведи букву: ");
-        String input = scanner.nextLine();
-        return input.charAt(0);
+        inputLetterPlayer = scanner.next();
+        return inputLetterPlayer;
     }
 
-    public static String[] CheckongTheLetter(String word) {
+    public static String CheckongTheLetter() {
         int i = 0;
-        String[] m = new String[word.length()];
-        ArrayList<Character> arrayErrorLetter=new ArrayList<Character>();
-        String e = "";
-        String gg = "";
-        char chars;
+        StringBuilder stringBuilder = new StringBuilder(isGetCloneWord());
         displayGallow();
+        System.out.println("\nСлово:"+isGetCloneWord());
         while (i <= MAXTRY) {
             boolean foundLetter = false;
-            chars = inputPlayerTheLetter();
-            for (int j = 0; j < word.length(); j++) {
-
-                if (word.charAt(j) == chars) {
+            inputLetterPlayer = inputPlayerTheLetter();
+            for (int j = 0; j < wordSecret.length(); j++) {
+                if (wordSecret.charAt(j) == inputLetterPlayer.charAt(0)) {
                     foundLetter = true;
                     System.out.println("Вы угадали букву!");
-                    m[j] = Character.toString(chars);
-                    e = Arrays.toString(m);
-                    gg = e.replaceAll("[\\[\\],\\s]", "");
-                    System.out.println(gg);
+                    stringBuilder.setCharAt(j, inputLetterPlayer.charAt(0));
+                    recordWord = stringBuilder.toString();
+                    System.out.println("Слово:"+recordWord);
+                    System.out.println("Ошибки:"+ lettersError.toString());
                 }
             }
             if (!foundLetter) {
                 System.out.println("Вы не угадали букву!");
-                System.out.println(arrayErrorLetter.add(chars));
+                System.out.println("Слово:"+recordWord);
                 ++i;
+                lettersError.add(inputLetterPlayer);
+                System.out.println("Ошибки:"+ lettersError.toString());
                 outputGallow(i);
             }
 
-            if (gg.equals(word)) {
-                System.out.println("\nВы угадали слово, поздравляем!!!");
-                break;
-            }
+
             if (i == MAXTRY) {
-                System.out.println("\nОтгадывающий проиграл, загадонное слово" + "-" + word);
+                System.out.println("\nОтгадывающий проиграл, загадонное слово" + "-" + wordSecret);
                 break;
             }
         }
-        return m;
+        return recordWord;
         //Проверяется условие на совпадение буквы в слове
         //цикл while с условием когда ошибок не должно быть больше 6
     }
 
+    public static String isGetCloneWord(){
+        return  wordCloneForLetter.replaceAll("[а-яa-zA-ZА-Я]", "*");
+    }
+
+    public static boolean сheckingWords(){
+        if (recordWord.equals(wordSecret)) {
+            System.out.println("\nВы угадали слово, поздравляем!!!");
+            return true;
+        }
+        return false;
+    }
+
+//    public static String inputPlayerTheNumber() {
+//        //Игрок 2 вводит букву через scanner
+//
+//        int i = scanner.next();
+//        return i;
+//    }
 
 }
