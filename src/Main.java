@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -6,6 +7,30 @@ import java.util.ArrayList;
 public class Main {
 
     private static Scanner scanner = new Scanner(System.in);
+    private static Random random = new Random();
+    private static int randomIndex;
+    private static String[] words= new String[]{
+            "Книга",
+            "Человек",
+            "Дом",
+            "Солнце",
+            "Город",
+            "Стол",
+            "Море",
+            "Кот",
+            "Дерево",
+            "Птица",
+            "Цветок",
+            "Машина",
+            "Река",
+            "Гора",
+            "Звезда",
+            "Озеро",
+            "Лес",
+            "Мост",
+            "Парк",
+            "Чашка"
+    };
     private static int MAXTRY = 6;
     private static String wordSecret;
     private static String wordCloneForLetter;
@@ -22,20 +47,22 @@ public class Main {
     };
 
     public static void main(String[] args) {
+        restartExitGame();
         startGame();
     }
 
     public static void startGame(){
-        wordSecret = inputSecretWordFirstPlayer();
-        wordCloneForLetter = wordSecret;
+        randomIndex = random.nextInt(words.length);
+        wordSecret = words[randomIndex];
+        wordCloneForLetter = "*".repeat(wordSecret.length());
         CheckingTheLetter();
     }
 
     public static String CheckingTheLetter() {
         int i = 0;
-        StringBuilder stringBuilder = new StringBuilder(isGetCloneWord());
+        StringBuilder stringBuilder = new StringBuilder(wordCloneForLetter);
         displayGallow();
-        System.out.println("\nСлово:" + isGetCloneWord());
+        System.out.println("\nСлово:" + wordCloneForLetter);
         while (i <= MAXTRY) {
             boolean foundLetter = false;
             inputLetterPlayer = inputPlayerTheLetter();
@@ -44,25 +71,25 @@ public class Main {
                     foundLetter = true;
                     System.out.println("Вы угадали букву!");
                     stringBuilder.setCharAt(j, inputLetterPlayer.charAt(0));
-                    recordWord = stringBuilder.toString();
-                    System.out.println("Слово:" + recordWord);
+                    wordCloneForLetter = stringBuilder.toString();
+                    System.out.println("Слово:" + wordCloneForLetter);
                     System.out.println("Ошибки:" + lettersError.toString());
                 }
             }
             if (!foundLetter) {
                 System.out.println("Вы не угадали букву!");
-                System.out.println("Слово:" + isGetCloneWord());
+                System.out.println("Слово:" + wordCloneForLetter);
                 ++i;
                 lettersError.add(inputLetterPlayer);
                 System.out.println("Ошибки:" + lettersError.toString());
                 outputGallow(i);
             }
 
-            checkingWords(recordWord);
+            checkingWords(wordCloneForLetter);
             checkingTheAttempt(i);
 
         }
-        return recordWord;
+        return wordCloneForLetter;
     }
 
     public static void displayGallow() {
@@ -116,13 +143,7 @@ public class Main {
         return wordCloneForLetter.replaceAll("[а-яa-zA-ZА-Я]", "*");
     }
 
-    public static boolean сheckingWords() {
-        if (recordWord.equals(wordSecret)) {
-            System.out.println("\nВы угадали слово, поздравляем!!!");
-            return true;
-        }
-        return false;
-    }
+
 
     public static int inputPlayerTheNumber() {
         //Игрок 2 вводит букву через scanner
@@ -171,9 +192,9 @@ public class Main {
     }
 
     public static void restartExitGame(){
-        System.out.println("Вы хотите повторить игру?");
+        System.out.println("Вы хотите начать игру?");
         System.out.println("Выйти из игры-нажмите на число 1");
-        System.out.println("Повторить игру-нажмите на число 2");
+        System.out.println("Начать игру-нажмите на число 2");
         int i=inputPlayerTheNumber();
         if (i==1){
             System.exit(0);
@@ -190,4 +211,5 @@ public class Main {
         String secretWord = scanner.next();
         return secretWord;
     }
+
 }
