@@ -206,10 +206,4 @@ public class Main {
         }
     }
 
-    public static String inputSecretWordFirstPlayer() {
-        System.out.println("Введи секретное слово:");
-        String secretWord = scanner.next();
-        return secretWord;
-    }
-
 }
