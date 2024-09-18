@@ -133,7 +133,7 @@ public class Main {
     }
 
     public static String inputPlayerTheLetter() {
-        //Игрок 2 вводит букву через scanner
+
         System.out.println("\nВведи букву: ");
         inputLetterPlayer = scanner.next();
         return inputLetterPlayer;
@@ -146,7 +146,7 @@ public class Main {
 
 
     public static int inputPlayerTheNumber() {
-        //Игрок 2 вводит букву через scanner
+
         System.out.println("Введите цифру:");
         int i = Integer.parseInt(scanner.next());
         return i;
