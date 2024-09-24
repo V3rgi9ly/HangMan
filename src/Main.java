@@ -1,6 +1,11 @@
-import java.util.Random;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -9,59 +14,41 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
     private static int randomIndex;
-    private static String[] words= new String[]{
-            "Книга",
-            "Человек",
-            "Дом",
-            "Солнце",
-            "Город",
-            "Стол",
-            "Море",
-            "Кот",
-            "Дерево",
-            "Птица",
-            "Цветок",
-            "Машина",
-            "Река",
-            "Гора",
-            "Звезда",
-            "Озеро",
-            "Лес",
-            "Мост",
-            "Парк",
-            "Чашка"
-    };
+
     private static int MAXTRY = 6;
     private static String wordSecret;
     private static String wordCloneForLetter;
     private static String inputLetterPlayer;
     private static String recordWord;
     private static ArrayList<String> lettersError = new ArrayList<String>();
-    private static String[] glawos = {
-            " _____\n",
-            " |   |\n",
-            " |   \n",
-            " |   \n",
-            " |   \n",
-            "-----------"
-    };
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         restartExitGame();
         startGame();
     }
 
-    public static void startGame(){
-        randomIndex = random.nextInt(words.length);
-        wordSecret = words[randomIndex];
+    public static void startGame() throws IOException {
+        Path path = Paths.get("src\\words");
+        List<String> lines = Files.readAllLines(path);
+        String[] words = new String[lines.size()];
+        String s;
+        for (int i = 0; i <= words.length - 1; i++) {
+            s = lines.get(i);
+            words[i] = s;
+
+        }
+
+
+        wordSecret = words[random.nextInt(words.length)].toLowerCase();
+        ;
         wordCloneForLetter = "*".repeat(wordSecret.length());
         CheckingTheLetter();
     }
 
-    public static String CheckingTheLetter() {
+    public static String CheckingTheLetter() throws IOException {
         int i = 0;
         StringBuilder stringBuilder = new StringBuilder(wordCloneForLetter);
-        displayGallow();
+
         System.out.println("\nСлово:" + wordCloneForLetter);
         while (i <= MAXTRY) {
             boolean foundLetter = false;
@@ -69,20 +56,24 @@ public class Main {
             for (int j = 0; j < wordSecret.length(); j++) {
                 if (wordSecret.charAt(j) == inputLetterPlayer.charAt(0)) {
                     foundLetter = true;
+                    outputGallows(foundLetter, i);
                     System.out.println("Вы угадали букву!");
                     stringBuilder.setCharAt(j, inputLetterPlayer.charAt(0));
                     wordCloneForLetter = stringBuilder.toString();
                     System.out.println("Слово:" + wordCloneForLetter);
                     System.out.println("Ошибки:" + lettersError.toString());
+
                 }
             }
             if (!foundLetter) {
                 System.out.println("Вы не угадали букву!");
+
                 System.out.println("Слово:" + wordCloneForLetter);
                 ++i;
+                outputGallows(foundLetter, i);
                 lettersError.add(inputLetterPlayer);
                 System.out.println("Ошибки:" + lettersError.toString());
-                outputGallow(i);
+                //outputGallow(i);
             }
 
             checkingWords(wordCloneForLetter);
@@ -92,58 +83,25 @@ public class Main {
         return wordCloneForLetter;
     }
 
-    public static void displayGallow() {
-        for (String line : glawos) {
-            System.out.print(line);
+    public static void outputGallows(boolean condition, int maxTry) {
+        if (condition == true) {
+            System.out.println(Glawos.glawose[maxTry]);
+        } else if (condition == false) {
+            System.out.println(Glawos.glawose[maxTry]);
         }
-    }
 
-    public static void updateGallow(int step) {
-        switch (step) {
-            case 1:
-                glawos[2] = " |   O\n";
-                break;
-            case 2:
-                glawos[3] = " |   |\n";
-                break;
-            case 3:
-                glawos[3] = " |  /|\n";
-                break;
-            case 4:
-                glawos[3] = " |  /|\\\n";
-                break;
-            case 5:
-                glawos[4] = " |  / \n";
-                break;
-            case 6:
-                glawos[4] = " |  / \\\n";
-                break;
-            default:
-                break;
-        }
-    }
-
-    public static void outputGallow(int i) {
-
-        for (; i <= MAXTRY; ) {
-            updateGallow(i);
-            displayGallow();
-            break;
-        }
     }
 
     public static String inputPlayerTheLetter() {
 
         System.out.println("\nВведи букву: ");
         inputLetterPlayer = scanner.next();
-        return inputLetterPlayer;
+        return inputLetterPlayer.toLowerCase();
     }
 
     public static String isGetCloneWord() {
         return wordCloneForLetter.replaceAll("[а-яa-zA-ZА-Я]", "*");
     }
-
-
 
     public static int inputPlayerTheNumber() {
 
@@ -152,7 +110,7 @@ public class Main {
         return i;
     }
 
-    public static boolean checkingWords(String recordWord) {
+    public static boolean checkingWords(String recordWord) throws IOException {
         if (wordSecret.equals(recordWord)) {
             System.out.println("\nВы угадали слово, поздравляем!!!");
             restartExitGame();
@@ -162,7 +120,7 @@ public class Main {
         return false;
     }
 
-    public static boolean checkingTheAttempt(int attempt) {
+    public static boolean checkingTheAttempt(int attempt) throws IOException {
         if (attempt == MAXTRY) {
             System.out.println("\nОтгадывающий проиграл, загадонное слово" + "-" + wordSecret);
             restartExitGame();
@@ -179,31 +137,37 @@ public class Main {
         return lettersError;
     }
 
-    public static String[] zeroingTheGallows() {
-        glawos = new String[]{
-                " _____\n",
-                " |   |\n",
-                " |   \n",
-                " |   \n",
-                " |   \n",
-                "-----------"
-        };
-        return glawos;
-    }
 
-    public static void restartExitGame(){
+    public static void restartExitGame() throws IOException {
         System.out.println("Вы хотите начать игру?");
         System.out.println("Выйти из игры-нажмите на число 1");
         System.out.println("Начать игру-нажмите на число 2");
-        int i=inputPlayerTheNumber();
-        if (i==1){
+        int i = inputPlayerTheNumber();
+        if (i == 1) {
             System.exit(0);
         }
-        if (i==2){
+        if (i == 2) {
             zeroingTheArray();
-            zeroingTheGallows();
             startGame();
         }
     }
+
+//    public static boolean listErrorLetter(String letter) throws IOException {
+//        if (lettersError.isEmpty()) {
+//            lettersError.add(letter);
+//            return false;
+//        } else {
+//            for (int i = 0; i <=lettersError.size()-1; i++) {
+//                if (letter.equals(lettersError.get(i))) {
+//                    break;
+//
+//                } else {
+//                    lettersError.add(letter);
+//                }
+//            }
+//            return true;
+//        }
+//
+//    }
 
 }
