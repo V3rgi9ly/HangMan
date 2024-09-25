@@ -28,6 +28,12 @@ public class Main {
     }
 
     public static void startGame() throws IOException {
+        wordSecret = outputWordsSecret()[random.nextInt(outputWordsSecret().length)].toLowerCase();
+        wordCloneForLetter = "*".repeat(wordSecret.length());
+        CheckingTheLetter();
+    }
+
+    public static String[] outputWordsSecret() throws IOException {
         Path path = Paths.get("src\\words");
         List<String> lines = Files.readAllLines(path);
         String[] words = new String[lines.size()];
@@ -37,13 +43,9 @@ public class Main {
             words[i] = s;
 
         }
-
-
-        wordSecret = words[random.nextInt(words.length)].toLowerCase();
-        ;
-        wordCloneForLetter = "*".repeat(wordSecret.length());
-        CheckingTheLetter();
+        return words;
     }
+
 
     public static String CheckingTheLetter() throws IOException {
         int i = 0;
@@ -71,7 +73,7 @@ public class Main {
                 System.out.println("Слово:" + wordCloneForLetter);
                 ++i;
                 outputGallows(foundLetter, i);
-                lettersError.add(inputLetterPlayer);
+                listErrorLetter(inputLetterPlayer);
                 System.out.println("Ошибки:" + lettersError.toString());
                 //outputGallow(i);
             }
@@ -152,22 +154,20 @@ public class Main {
         }
     }
 
-//    public static boolean listErrorLetter(String letter) throws IOException {
-//        if (lettersError.isEmpty()) {
-//            lettersError.add(letter);
-//            return false;
-//        } else {
-//            for (int i = 0; i <=lettersError.size()-1; i++) {
-//                if (letter.equals(lettersError.get(i))) {
-//                    break;
-//
-//                } else {
-//                    lettersError.add(letter);
-//                }
-//            }
-//            return true;
-//        }
-//
-//    }
-
+    public static void listErrorLetter(String letter) throws IOException {
+        boolean foundLetter = false;
+        if (lettersError.isEmpty()) {
+            lettersError.add(letter);
+        } else {
+            for (String s : lettersError) {
+                if (s.equals(letter)) {
+                    foundLetter = true;
+                    break;
+                }
+            }
+            if (!foundLetter) {
+                lettersError.add(letter);
+            }
+        }
+    }
 }
