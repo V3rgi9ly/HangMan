@@ -71,7 +71,12 @@ public class Main {
                 System.out.println("Вы не угадали букву!");
 
                 System.out.println("Слово:" + wordCloneForLetter);
-                ++i;
+                if(listErrorLetter(inputLetterPlayer).equals(inputLetterPlayer)){
+                    i+=0;
+                }
+                else {
+                    ++i;
+                }
                 outputGallows(foundLetter, i);
                 listErrorLetter(inputLetterPlayer);
                 System.out.println("Ошибки:" + lettersError.toString());
@@ -154,12 +159,14 @@ public class Main {
         }
     }
 
-    public static void listErrorLetter(String letter) throws IOException {
+    public static String listErrorLetter(String letter) throws IOException {
         boolean foundLetter = false;
+        String c = "";
         if (lettersError.isEmpty()) {
             lettersError.add(letter);
         } else {
             for (String s : lettersError) {
+                c=s;
                 if (s.equals(letter)) {
                     foundLetter = true;
                     break;
@@ -169,5 +176,6 @@ public class Main {
                 lettersError.add(letter);
             }
         }
+        return  c;
     }
 }
